@@ -1,3 +1,4 @@
 {
-    "mongoURI":"mongodb+srv://jungho1109:wjdgh123123@devconnector-rur7c.mongodb.net/test?retryWrites=true&w=majority"
+    "mongoURI":"mongodb+srv://jungho1109:wjdgh123123@devconnector-rur7c.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtSecret":"mysecretjsonwebtoken"
 }
