@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node -r esm server.js",
-    "dev":"nodemon -r esm server.js"
+    "server":"nodemon -r esm server.js",
+    "client":"npm start --prefix client",
+    "dev":"concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
