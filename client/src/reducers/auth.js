@@ -6,6 +6,8 @@ const REGISTER_SUCCESS = "auth/REGISTER_SUCCESS";
 const REGISTER_FAIL = "auth/REGISTER_FAIL";
 const USER_LOADED = "auth/USER_LOADED";
 const AUTH_ERROR = "auth/AUTH_ERROR";
+const LOGIN_SUCCESS = "auth/LOGIN_SUCCESS";
+const LOGIN_FAIL = "auth/LOGIN_FAIL";
 
 // Load User
 export const loadUser=()=>async dispatch=>{
@@ -43,6 +45,9 @@ export const register =({name,email,password})=>async dispatch=>{
             type:REGISTER_SUCCESS,
             payload:res.data
         })
+
+        dispatch(loadUser());
+
     } catch (err) {
         
         const errors = err.response.data.errors;
@@ -53,6 +58,39 @@ export const register =({name,email,password})=>async dispatch=>{
 
         dispatch({
             type:REGISTER_FAIL
+        })
+    }
+}
+
+// Login User
+export const login =({email,password})=>async dispatch=>{
+    const config={
+        headers:{
+            'Content-Type':'application/json',
+        }
+    }
+
+    const body =JSON.stringify({email,password});
+    try {
+        
+        const res = await axios.post("/api/auth",body,config);
+
+        dispatch({
+            type:LOGIN_SUCCESS,
+            payload:res.data
+        })
+
+        dispatch(loadUser());
+    } catch (err) {
+        
+        const errors = err.response.data.errors;
+        
+        if(errors){
+            errors.forEach(error=>dispatch(setAlert(error.msg,'danger',3000)))
+        }
+
+        dispatch({
+            type:LOGIN_FAIL
         })
     }
 }
@@ -78,10 +116,12 @@ export default function auth(state=initialState,action){
                 user:payload
             }
         case REGISTER_SUCCESS:
+        case LOGIN_SUCCESS:
             localStorage.setItem('token',payload.token);
             return{...state,...payload,isAuthenticated:true,loading:false}
         case REGISTER_FAIL:
         case AUTH_ERROR:
+        case LOGIN_FAIL:
             localStorage.removeItem('token');
             return{...state,token:null,isAuthenticated:false,loading:false}
             
