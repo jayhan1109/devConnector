@@ -8,6 +8,7 @@ const USER_LOADED = "auth/USER_LOADED";
 const AUTH_ERROR = "auth/AUTH_ERROR";
 const LOGIN_SUCCESS = "auth/LOGIN_SUCCESS";
 const LOGIN_FAIL = "auth/LOGIN_FAIL";
+const LOGOUT = "auth/LOGOUT";
 
 // Load User
 export const loadUser=()=>async dispatch=>{
@@ -95,6 +96,11 @@ export const login =({email,password})=>async dispatch=>{
     }
 }
 
+// Logout / Clear Profile
+export const logout=()=>dispatch=>{
+    dispatch({type:LOGOUT});
+}
+
 
 
 const initialState={
@@ -122,6 +128,7 @@ export default function auth(state=initialState,action){
         case REGISTER_FAIL:
         case AUTH_ERROR:
         case LOGIN_FAIL:
+        case LOGOUT:
             localStorage.removeItem('token');
             return{...state,token:null,isAuthenticated:false,loading:false}
             
