@@ -10,6 +10,7 @@ const AUTH_ERROR = "auth/AUTH_ERROR";
 const LOGIN_SUCCESS = "auth/LOGIN_SUCCESS";
 const LOGIN_FAIL = "auth/LOGIN_FAIL";
 const LOGOUT = "auth/LOGOUT";
+export const ACCOUNT_DELETE = "profile/ACCOUNT_DELETE";
 
 // Load User
 export const loadUser=()=>async dispatch=>{
@@ -131,6 +132,7 @@ export default function auth(state=initialState,action){
         case AUTH_ERROR:
         case LOGIN_FAIL:
         case LOGOUT:
+        case ACCOUNT_DELETE:
             localStorage.removeItem('token');
             return{...state,token:null,isAuthenticated:false,loading:false}
             

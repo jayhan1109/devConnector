@@ -4,6 +4,7 @@ import { check, validationResult } from "express-validator";
 import request from "request";
 import config from "config";
 import { User } from "../../models/User";
+import { Post } from "../../models/Post";
 import { auth } from "../../middleware/auth";
 
 export const router = express.Router();
@@ -151,7 +152,8 @@ router.get("/user/:user_id", async (req, res) => {
 // @access  Private
 router.delete("/", auth, async (req, res) => {
   try {
-    // TODO - remove users posts
+    // remove users posts
+    await Post.deleteMany({ user: req.user.id });
     // Remove profile
     await Profile.findOneAndRemove({ user: req.user.id });
 

@@ -1,10 +1,11 @@
 import axios from "axios";
 import { setAlert } from "./alert";
+import {ACCOUNT_DELETE} from './auth';
 
 export const GET_PROFILE = "profile/GET_PROFILE";
 export const PROFILE_ERROR = "profile/PROFILE_ERROR";
 export const CLEAR_PROFILE = "profile/CLEAR_PROFILE";
-export const UPDATE_PROFILE = 'profile/UPDATE_PROFILE';
+export const UPDATE_PROFILE = "profile/UPDATE_PROFILE";
 
 // Get current user profile
 export const getCurrentProfile = () => async dispatch => {
@@ -45,7 +46,7 @@ export const createProfile = (
       payload: res.data
     });
 
-    dispatch(setAlert(edit ? "Profile Updated" : "Profile Created",'success'));
+    dispatch(setAlert(edit ? "Profile Updated" : "Profile Created", "success"));
 
     if (!edit) {
       history.push("/dashboard");
@@ -68,7 +69,7 @@ export const createProfile = (
 };
 
 // Add Experience
-export const addExperience =(formData,history)=>async dispatch=>{
+export const addExperience = (formData, history) => async dispatch => {
   try {
     const config = {
       headers: {
@@ -82,10 +83,9 @@ export const addExperience =(formData,history)=>async dispatch=>{
       payload: res.data
     });
 
-    dispatch(setAlert('Experience Added','success'));
+    dispatch(setAlert("Experience Added", "success"));
 
-      history.push("/dashboard");
-
+    history.push("/dashboard");
   } catch (err) {
     const errors = err.response.data.errors;
 
@@ -101,10 +101,10 @@ export const addExperience =(formData,history)=>async dispatch=>{
       }
     });
   }
-}
+};
 
 // Add Education
-export const addEducation =(formData,history)=>async dispatch=>{
+export const addEducation = (formData, history) => async dispatch => {
   try {
     const config = {
       headers: {
@@ -118,10 +118,9 @@ export const addEducation =(formData,history)=>async dispatch=>{
       payload: res.data
     });
 
-    dispatch(setAlert('Education Added','success'));
+    dispatch(setAlert("Education Added", "success"));
 
-      history.push("/dashboard");
-
+    history.push("/dashboard");
   } catch (err) {
     const errors = err.response.data.errors;
 
@@ -137,7 +136,93 @@ export const addEducation =(formData,history)=>async dispatch=>{
       }
     });
   }
-}
+};
+
+// Delete experience
+export const deleteExperience = id => async dispatch => {
+  try {
+    const res = await axios.delete(`/api/profile/experience/${id}`);
+    dispatch({
+      type: UPDATE_PROFILE,
+      payload: res.data
+    });
+
+    dispatch(setAlert("Experience removed", "success"));
+  } catch (err) {
+    const errors = err.response.data.errors;
+
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, "danger", 3000)));
+    }
+
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        msg: err.response.statusText,
+        status: err.response.status
+      }
+    });
+  }
+};
+
+// Delete education
+export const deleteEducation = id => async dispatch => {
+  try {
+    const res = await axios.delete(`/api/profile/education/${id}`);
+    dispatch({
+      type: UPDATE_PROFILE,
+      payload: res.data
+    });
+
+    dispatch(setAlert("Education removed", "success"));
+  } catch (err) {
+    const errors = err.response.data.errors;
+
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, "danger", 3000)));
+    }
+
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: {
+        msg: err.response.statusText,
+        status: err.response.status
+      }
+    });
+  }
+};
+
+// Delete account & profile
+export const deleteAccount = id => async dispatch => {
+  if (window.confirm("Are you sure? This can Not be undone!")) {
+    try {
+      const res = await axios.delete(`/api/profile`);
+      dispatch({
+        type: CLEAR_PROFILE
+      });
+
+      dispatch({
+        type: ACCOUNT_DELETE
+      });
+
+      dispatch(setAlert("Your account has been permanently deleted"));
+    } catch (err) {
+      const errors = err.response.data.errors;
+
+      if (errors) {
+        errors.forEach(error => dispatch(setAlert(error.msg, "danger", 3000)));
+      }
+
+      dispatch({
+        type: PROFILE_ERROR,
+        payload: {
+          msg: err.response.statusText,
+          status: err.response.status
+        }
+      });
+    }
+  }
+};
 
 const initialState = {
   profile: null,
